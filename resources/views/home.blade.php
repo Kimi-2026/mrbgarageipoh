@@ -18,61 +18,65 @@
         <div class="row no-gutters">
             <div class="col-md-12 featured-top">
                 <div class="row no-gutters">
-                    <div class="col-md-4 d-flex align-items-center">
-                        <form action="#" class="request-form ftco-animate bg-primary">
+                    
+                    <div class="col-md-4 d-flex align-items-stretch">
+                        <form id="bookingForm" action="{{ route('booking.store') }}" method="POST" class="request-form ftco-animate bg-primary w-100">
+                            @csrf
                             <h2>Make an Appointment</h2>
+                            
                             <div class="form-group">
                                 <label class="label">Vehicle Model</label>
-                                <input type="text" class="form-control" placeholder="e.g. Proton Saga, Yamaha Y15, Van Hiace" required>
+                                <input type="text" name="vehicle_model" class="form-control" placeholder="e.g. Proton Saga, Yamaha Y15, Van Hiace" required>
                             </div>
 
                             <div class="d-flex">
                                 <div class="form-group mr-2">
                                     <label class="label">Plat Number</label>
-                                    <input type="text" class="form-control"  placeholder="VKM 6853" pattern="[A-Za-z0-9\s]{2,10}" style="text-transform: uppercase;" required>
+                                    <input type="text" name="plat_number" class="form-control" placeholder="VKM 6853" pattern="[A-Za-z0-9\s]{2,10}" style="text-transform: uppercase;" required>
                                 </div>
                                 <div class="form-group ml-2">
                                     <label class="label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" placeholder="013-4567899" required>
+                                    <input type="tel" name="phone" class="form-control" id="phone" placeholder="013-4567899" required>
                                 </div>
                             </div>
                             
                             <div class="form-group">
                                 <label class="label">Select Service Package</label>
                                 <div class="select-wrap">
-                  <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                  <select name="service_package" id="service_package" class="form-control" style="color: rgba(255,255,255,0.8) !important;" required>
-                    <option value="" style="color: black;">-- Choose Package --</option>
-                    <option value="basic" style="color: black;">Basic Maintenance (RM 60)</option>
-                    <option value="major" style="color: black;">Major Tune-Up (RM 150)</option>
-                    <option value="custom" style="color: black;">Custom Repair Work (Inspection Needed)</option>
-                  </select>
-
-                  <div id="custom-input-wrapper" style="display: none; margin-top: 10px;">
-                    <label for="custom-desc">Nyatakan servis yang diperlukan:</label>
-                    <textarea id="custom-desc" name="custom_desc" placeholder="Contoh: Tukar brek pad, check aircond..."></textarea>
-                  </div>
-                </div>
+                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                                    <select name="service_package" id="service_package" class="form-control" style="color: rgba(255,255,255,0.8) !important;" required>
+                                        <option value="" style="color: black;">-- Choose Package --</option>
+                                        <option value="basic" style="color: black;">Basic Maintenance (RM 60)</option>
+                                        <option value="major" style="color: black;">Major Tune-Up (RM 150)</option>
+                                        <option value="custom" style="color: black;">Custom Repair Work (Inspection Needed)</option>
+                                    </select>
+                                </div>
+                                <div id="custom-input-wrapper" style="display: none; margin-top: 10px;">
+                                    <label for="custom-desc" style="color: white;">Nyatakan servis yang diperlukan:</label>
+                                    <textarea id="custom-desc" name="custom_desc" class="form-control" placeholder="Contoh: Tukar brek pad, check aircond..."></textarea>
+                                </div>
                             </div>
                             
                             <div class="d-flex">
                                 <div class="form-group mr-2">
                                     <label class="label">Appointment Date</label>
-                                    <input type="text" class="form-control" id="book_pick_date" placeholder="Date" required>
+                                    <input type="text" name="appointment_date" class="form-control" id="book_pick_date" placeholder="YYYY-MM-DD" required autocomplete="off">
                                 </div>
                                 <div class="form-group ml-2">
                                     <label class="label">Preferred Time</label>
-                                    <input type="text" class="form-control" id="time_pick" placeholder="Time" required>
+                                    <input type="text" name="preferred_time" class="form-control" id="time_pick" placeholder="Time" required autocomplete="off">
                                 </div>
                             </div>
+                            
                             <div class="form-group">
-                                <input type="submit" value="Submit Booking Request" class="btn btn-secondary py-3 px-4">
+                                <input type="submit" value="Submit Booking Request" class="btn btn-secondary py-3 px-4 w-100">
                             </div>
                         </form>
                     </div>
+                    
                     <div class="col-md-8 d-flex align-items-center">
-                        <div class="services-wrap rounded-right w-100">
-                            <h3 class="heading-section mb-4">Easy Way To Service Your Vehicle</h3>
+                        <div class="services-wrap rounded-right w-100 p-5 bg-white shadow-sm">
+                            <h3 class="heading-section mb-4" style="color: black;">Easy Way To Service Your Vehicle</h3>
                             <div class="row d-flex mb-4">
                                 <div class="col-md-4 d-flex align-self-stretch ftco-animate">
                                     <div class="services w-100 text-center">
@@ -105,11 +109,75 @@
                             <p><a href="{{ route('about') }}" class="btn btn-primary py-3 px-4">Learn More About Project</a></p>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+$(document).ready(function() {
+    // Tunjukkan / sembunyikan textarea untuk custom package
+    $('#service_package').on('change', function() {
+        if ($(this).val() === 'custom') {
+            $('#custom-input-wrapper').show();
+        } else {
+            $('#custom-input-wrapper').hide();
+        }
+    });
+
+    // Initialise Datepicker & Selesaikan masalah bug tahun 1912
+    $('#book_pick_date').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true,
+        startDate: new Date()
+    });
+
+    // Betulkan AJAX Submit Form
+    $('#bookingForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        let car = $('input[name="vehicle_model"]').val(); 
+        let plat = $('input[name="plat_number"]').val();
+        let phone = $('#phone').val();
+        let service = $('#service_package').val();
+        let date = $('#book_pick_date').val();
+        let time = $('#time_pick').val();
+
+        if(date === "") {
+            Swal.fire('Oops!', 'Sila pilih tarikh temujanji.', 'warning');
+            return;
+        }
+
+        let formData = $(this).serialize();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                Swal.fire({
+                    title: 'Booking Saved!',
+                    text: 'Data disimpan. Klik OK untuk ke WhatsApp.',
+                    icon: 'success'
+                }).then(() => {
+                    let waUrl = `https://wa.me/60125551234?text=Hai%20MRB%20Garage,%20saya%20nak%20booking.%0A%0A` +
+                                `🚗 Model: ${car}%0A` +
+                                `🔢 No Plat: ${plat}%0A` +
+                                `📅 Tarikh: ${date}%0A` +
+                                `⏰ Masa: ${time}`;
+                    window.open(waUrl, '_blank');
+                    $('#bookingForm')[0].reset();
+                    $('#custom-input-wrapper').hide();
+                });
+            }
+        });
+    });
+});
+</script>
 
 <section class="ftco-section ftco-about">
     <div class="container">
@@ -225,13 +293,35 @@
               </div>
             </div>
           </div>
-
+         
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<section class="ftco-section pt-0">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2 class="text-center mb-4">Lokasi Kami</h2>
+        <div class="shadow-sm rounded overflow-hidden">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.146685890786!2d101.07185037496645!3d4.606771395368301!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cae5e1a3d6d025%3A0x6a2c2c045b85a363!2s246a%2C%20Jalan%20Pauh%20Kijang%2C%20Kampung%20Tengku%20Hussein%20Hujung%2C%2030020%20Ipoh%2C%20Perak!5e0!3m2!1sen!2smy!4v1717381665046!5m2!1sen!2smy" 
+          width="100%" height="450" style="border:0; display:block;" allowfullscreen="" loading="lazy"></iframe>
+          <div class="col-md-12 text-center mt-3">
+            <div class="p-3">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=4.606771395368301,101.07185037496645" 
+              target="_blank" 
+              class="btn btn-primary">
+              <span class="icon-map-marker"></span> Open in google maps
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="ftco-counter ftco-section img bg-light" id="section-counter">
     <div class="overlay"></div>

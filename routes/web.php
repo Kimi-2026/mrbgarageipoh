@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\BookingController;
+
+Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
+
 // --- MAIN PAGES ---
 Route::get('/', function () { return view('home'); })->name('home');
 Route::get('/about', function () { return view('about'); })->name('about');
