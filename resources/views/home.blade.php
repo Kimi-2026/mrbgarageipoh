@@ -60,11 +60,11 @@
                             <div class="d-flex">
                                 <div class="form-group mr-2">
                                     <label class="label">Appointment Date</label>
-                                    <input type="text" name="appointment_date" class="form-control" id="book_pick_date" placeholder="YYYY-MM-DD" required autocomplete="off">
+                                    <input type="date" name="appointment_date" class="form-control" id="book_pick_date" min="{{ date('Y-m-d') }}" required>
                                 </div>
                                 <div class="form-group ml-2">
                                     <label class="label">Preferred Time</label>
-                                    <input type="text" name="preferred_time" class="form-control" id="time_pick" placeholder="Time" required autocomplete="off">
+                                    <input type="time" name="preferred_time" class="form-control" id="time_pick" placeholder="Time" required autocomplete="off">
                                 </div>
                             </div>
                             
@@ -136,47 +136,6 @@ $(document).ready(function() {
         startDate: new Date()
     });
 
-    // Betulkan AJAX Submit Form
-    $('#bookingForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        let car = $('input[name="vehicle_model"]').val(); 
-        let plat = $('input[name="plat_number"]').val();
-        let phone = $('#phone').val();
-        let service = $('#service_package').val();
-        let date = $('#book_pick_date').val();
-        let time = $('#time_pick').val();
-
-        if(date === "") {
-            Swal.fire('Oops!', 'Sila pilih tarikh temujanji.', 'warning');
-            return;
-        }
-
-        let formData = $(this).serialize();
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                Swal.fire({
-                    title: 'Booking Saved!',
-                    text: 'Data disimpan. Klik OK untuk ke WhatsApp.',
-                    icon: 'success'
-                }).then(() => {
-                    let waUrl = `https://wa.me/60125551234?text=Hai%20MRB%20Garage,%20saya%20nak%20booking.%0A%0A` +
-                                `🚗 Model: ${car}%0A` +
-                                `🔢 No Plat: ${plat}%0A` +
-                                `📅 Tarikh: ${date}%0A` +
-                                `⏰ Masa: ${time}`;
-                    window.open(waUrl, '_blank');
-                    $('#bookingForm')[0].reset();
-                    $('#custom-input-wrapper').hide();
-                });
-            }
-        });
-    });
-});
 </script>
 
 <section class="ftco-section ftco-about">
@@ -362,4 +321,19 @@ $(document).ready(function() {
         </div>
     </div>
 </section>
+
+<section class="ftco-counter ftco-section img bg-light" id="section-counter">
+    </section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    @if(session('success'))
+        Swal.fire({
+            title: 'Berjaya!',
+            text: '{{ session("success") }}',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    @endif
+</script>
 @endsection

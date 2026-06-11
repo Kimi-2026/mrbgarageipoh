@@ -1,37 +1,37 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Booking;
 
 class BookingController extends Controller
 {
-    public function store(Request $request)
-    {
-        // Validasi input untuk elakkan data pelik masuk database
-        $validated = $request->validate([
-            'vehicle_model' => 'required|string|max:255',
-            'plat_number' => 'required|string|max:15',
-            'phone_number' => 'required|string|max:20',
-            'service_package' => 'required|string',
-            'appointment_date' => 'required',
-            'preferred_time' => 'required',
-        ]);
+   public function store(Request $request)
+  {
+    // 1. Validasi
+    $request->validate([
+        'vehicle_model' => 'required',
+        'plat_number' => 'required',
+        'phone' => 'required', // Pastikan semua field wajib ada
+        'appointment_date' => 'required',
+        'preferred_time' => 'required',
+        'service_package' => 'required'
+    ]);
 
-        // Simpan terus ke database guna Query Builder (laju dan selamat dari SQL Injection)
-        DB::table('bookings')->insert([
-            'vehicle_model' => trim($validated['vehicle_model']),
-            'plat_number' => strtoupper(trim($validated['plat_number'])),
-            'phone_number' => trim($validated['phone_number']),
-            'service_package' => $validated['service_package'],
-            'appointment_date' => date('Y-m-d', strtotime($validated['appointment_date'])),
-            'preferred_time' => date('H:i:s', strtotime($validated['preferred_time'])),
-            'status' => 'pending',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+    // 2. Ambil semua data
+    $data = $request->all();
 
-        return response()->json(['success' => true]);
-    }
+
+    // 3. Format tarikh dan masa
+    // Tukar tarikh ke Y-m-d
+    $data['appointment_date'] = date('Y-m-d', strtotime($request->appointment_date));
+
+    // 4. Tukar masa ke format 24-jam (H:i:s)
+    $data['preferred_time'] = date('H:i:s', strtotime($request->preferred_time));
+
+    // 5. Simpan SEKALI SAHAJA
+    Booking::create($data);
+
+    return redirect()->back()->with('success', 'Booking berjaya dihantar!');
+  }
 }

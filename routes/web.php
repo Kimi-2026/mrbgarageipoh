@@ -3,9 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\BookingController;
-
-Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
 
 // --- MAIN PAGES ---
 Route::get('/', function () { return view('home'); })->name('home');
@@ -62,3 +59,7 @@ Route::get('/service-detail/{type}', function ($type) {
     $s = $services[$type] ?? $services['engine'];
     return view('service-detail', ['serviceTitle' => $s['title'], 'serviceDescription' => $s['desc'], 'serviceChecklist' => $s['list']]);
 })->name('service.detail');
+
+use App\Http\Controllers\BookingController;
+
+Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');

@@ -15,12 +15,14 @@ return new class extends Migration
         $table->id();
         $table->string('vehicle_model');
         $table->string('plat_number');
-        $table->string('phone_number');
+        $table->string('phone');
         $table->string('service_package');
         $table->date('appointment_date');
         $table->time('preferred_time');
         $table->string('status')->default('pending'); // pending, approved, completed, cancelled
         $table->timestamps();
+
+        $table->text('custom_desc')->nullable();
     });
   }
     /**
