@@ -24,13 +24,13 @@ class BookingController extends Controller
 
     // 3. Format tarikh dan masa
     // Tukar tarikh ke Y-m-d
-    $data['appointment_date'] = date('Y-m-d', strtotime($request->appointment_date));
+    $data['appointment_date'] = date('Y-m-d', strtotime(str_replace('/','-', $request->appointment_date)));
 
     // 4. Tukar masa ke format 24-jam (H:i:s)
     $data['preferred_time'] = date('H:i:s', strtotime($request->preferred_time));
 
     // 5. Simpan SEKALI SAHAJA
-    Booking::create($data);
+    \App\Models\Booking::create($data);
 
     return redirect()->back()->with('success', 'Booking berjaya dihantar!');
   }

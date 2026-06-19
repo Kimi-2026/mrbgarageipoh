@@ -53,18 +53,18 @@
                                 </div>
                                 <div id="custom-input-wrapper" style="display: none; margin-top: 10px;">
                                     <label for="custom-desc" style="color: white;">Nyatakan servis yang diperlukan:</label>
-                                    <textarea id="custom-desc" name="custom_desc" class="form-control" placeholder="Contoh: Tukar brek pad, check aircond..."></textarea>
+                                    <textarea  id="custom_desc" name="custom_desc"  class="form-control" placeholder="Contoh: Tukar brek pad, check aircond..."></textarea>
                                 </div>
                             </div>
                             
                             <div class="d-flex">
                                 <div class="form-group mr-2">
                                     <label class="label">Appointment Date</label>
-                                    <input type="date" name="appointment_date" class="form-control" id="book_pick_date" min="{{ date('Y-m-d') }}" required>
+                                    <input type="text" name="appointment_date" class="form-control" id="book_pick_date" min="{{ date('Y-m-d') }}" placeholder="DD-MM-YYYY" required>
                                 </div>
                                 <div class="form-group ml-2">
                                     <label class="label">Preferred Time</label>
-                                    <input type="time" name="preferred_time" class="form-control" id="time_pick" placeholder="Time" required autocomplete="off">
+                                    <input type="time" name="preferred_time" class="form-control" id="time_picker" placeholder="Time" required autocomplete="off">
                                 </div>
                             </div>
                             
@@ -118,23 +118,41 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-$(document).ready(function() {
-    // Tunjukkan / sembunyikan textarea untuk custom package
-    $('#service_package').on('change', function() {
+    $(document).ready(function() {
+    // 1. Initialise Datepicker
+    $('#book_pick_date').datepicker({
+        format: 'yyyy-mm-dd', // Format ni database suka
+        autoclose: true,
+        todayHighlight: true,
+        startDate: new Date()
+    }).on('changeDate', function(e) {
+        // Paksa nilai masuk ke input supaya form nampak data tu
+        $('#book_pick_date').val(e.format('yyyy-mm-dd'));
+    });
+
+    // 2. Initialise Timepicker (Pastikan kau ada library timepicker)
+    $('#timepicker').timepicker({
+        timeFormat: 'h:mm p',
+        interval: 30,
+        minTime: '8',
+        maxTime: '10:00pm',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true,
+        change: function(time) {
+            // Ini yang buatkan input 'preferred_time' tu ada value
+            $('#timepicker').val($(this).val());
+        }
+    });
+
+    $(document).on('change', '#service_package', function() {
         if ($(this).val() === 'custom') {
             $('#custom-input-wrapper').show();
         } else {
             $('#custom-input-wrapper').hide();
         }
     });
-
-    // Initialise Datepicker & Selesaikan masalah bug tahun 1912
-    $('#book_pick_date').datepicker({
-        format: 'yyyy-mm-dd',
-        autoclose: true,
-        todayHighlight: true,
-        startDate: new Date()
-    });
+});  
 
 </script>
 
