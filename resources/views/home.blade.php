@@ -43,17 +43,17 @@
                             <div class="form-group">
                                 <label class="label">Select Service Package</label>
                                 <div class="select-wrap">
-                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                    <select name="service_package" id="service_package" class="form-control" style="color: rgba(255,255,255,0.8) !important;" required>
+                                    <!-- <div class="icon"><span class="ion-ios-arrow-down"></span></div> -->
+                                    <select name="service_package" id="manual_service_package" class="form-control" style="color: rgba(255,255,255,0.8) !important;" required>
                                         <option value="" style="color: black;">-- Choose Package --</option>
                                         <option value="basic" style="color: black;">Basic Maintenance (RM 60)</option>
                                         <option value="major" style="color: black;">Major Tune-Up (RM 150)</option>
                                         <option value="custom" style="color: black;">Custom Repair Work (Inspection Needed)</option>
                                     </select>
                                 </div>
-                                <div id="custom-input-wrapper" style="display: none; margin-top: 10px;">
-                                    <label for="custom-desc" style="color: white;">Nyatakan servis yang diperlukan:</label>
-                                    <textarea  id="custom_desc" name="custom_desc"  class="form-control" placeholder="Contoh: Tukar brek pad, check aircond..."></textarea>
+                                <div id="manual_custom_wrapper" style="display: none; margin-top: 10px;">
+                                     <label for="custom_desc" style="color: white;">Nyatakan servis yang diperlukan:</label>
+                                     <textarea  name="custom_desc" class="form-control" placeholder="Contoh: Tukar brek pad, check aircond..."></textarea>
                                 </div>
                             </div>
                             
@@ -118,42 +118,39 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    $(document).ready(function() {
-    // 1. Initialise Datepicker
+$(document).ready(function() {
+    
+    // --- BAHAGIAN DATE & TIME (Sama macam kau buat) ---
     $('#book_pick_date').datepicker({
-        format: 'yyyy-mm-dd', // Format ni database suka
+        format: 'yyyy-mm-dd',
         autoclose: true,
         todayHighlight: true,
         startDate: new Date()
     }).on('changeDate', function(e) {
-        // Paksa nilai masuk ke input supaya form nampak data tu
         $('#book_pick_date').val(e.format('yyyy-mm-dd'));
     });
 
-    // 2. Initialise Timepicker (Pastikan kau ada library timepicker)
     $('#timepicker').timepicker({
         timeFormat: 'h:mm p',
         interval: 30,
         minTime: '8',
         maxTime: '10:00pm',
-        dynamic: false,
-        dropdown: true,
-        scrollbar: true,
         change: function(time) {
-            // Ini yang buatkan input 'preferred_time' tu ada value
             $('#timepicker').val($(this).val());
         }
+      });
     });
 
-    $(document).on('change', '#service_package', function() {
-        if ($(this).val() === 'custom') {
-            $('#custom-input-wrapper').show();
-        } else {
-            $('#custom-input-wrapper').hide();
-        }
-    });
-});  
-
+    // --- BAHAGIAN SERVICE PACKAGE (Dah dibetulkan supaya kebal) ---
+    // Kita gunakan delegasi event supaya dia "tembus" plugin template
+    document.getElementById('manual_service_package').addEventListener('change', function() {
+    var wrapper = document.getElementById('manual_custom_wrapper');
+    if (this.value === 'custom') {
+        wrapper.style.display = 'block';
+    } else {
+        wrapper.style.display = 'none';
+    }
+});
 </script>
 
 <section class="ftco-section ftco-about">
