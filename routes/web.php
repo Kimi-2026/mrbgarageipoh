@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Http\Controllers\BookingController;
+
+
+Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');
 
 
 // --- MAIN PAGES ---
@@ -38,13 +42,15 @@ Route::get('/sparepart/detail/{name}', function ($name) {
     return view('sparepart-detail', ['name' => $name, 'data' => $data]);
 })->name('sparepart.detail');
 
-Route::get('/spareparts/search', function (Request $request) {
-    $parts = [
-        ['name' => 'Fully Synthetic Oil', 'price' => '180.00', 'img' => 'part_1.jpg'],
-        ['name' => 'Proton Saga VVT Oil Filter', 'price' => '25.00', 'img' => 'part_2.jpg'],
-        ['name' => 'Waja Brake Pads', 'price' => '110.00', 'img' => 'part_3.jpg'],
-        ['name' => 'Maintenance Free Battery (NS60)', 'price' => '280.00', 'img' => 'part_4.jpg']
-    ];
+// search //
+Route::get('/spareparts/search', function (\Illuminate\Http\Request $request) {
+    $query = $request->get('q');
+    
+    // Cari data dalam table sparepart
+    $parts = \Illuminate\Support\Facades\DB::table('sparepart')
+                ->where('name', 'LIKE', "%{$query}%")
+                ->get();
+                
     return response()->json($parts);
 })->name('sparepart.search');
 
@@ -60,6 +66,4 @@ Route::get('/service-detail/{type}', function ($type) {
     return view('service-detail', ['serviceTitle' => $s['title'], 'serviceDescription' => $s['desc'], 'serviceChecklist' => $s['list']]);
 })->name('service.detail');
 
-use App\Http\Controllers\BookingController;
 
-Route::post('/booking/store', [BookingController::class, 'store'])->name('booking.store');

@@ -23,20 +23,20 @@
         </div>
 
         <div class="row" id="partsGrid">
-            <div class="col-md-4 ftco-animate">
+            <!-- <div class="col-md-4 ftco-animate">
                 <div class="car-wrap rounded bg-white shadow-sm p-3">
                     <div class="img rounded mb-3" style="background-image: url('{{ asset('images/part_1.jpg') }}'); height: 200px;"></div>
                     <div class="text text-center pt-3">
                         <h3 class="mb-0">Fully Synthetic Oil</h3>
                         <p class="price mb-2 text-primary font-weight-bold">RM 180.00</p>
-                        <div class="d-flex justify-content-center">
-                            <button class="btn btn-outline-secondary mr-2" onclick="showDetails('Fully Synthetic Oil', '180.00', 'Minyak enjin berkualiti tinggi.')" data-toggle="modal" data-target="#detailModal">Details</button>
-                            <a href="https://wa.me/60123456789" class="btn btn-success text-white">Buy</a>
-                        </div>
-                    </div>
+                        <div class="d-flex justify-content-center"> -->
+                            <!-- <button class="btn btn-outline-secondary mr-2" onclick="showDetails('Fully Synthetic Oil', '180.00', 'Minyak enjin berkualiti tinggi.')" data-toggle="modal" data-target="#detailModal">Details</button>
+                            <a href="https://wa.me/60123456789" class="btn btn-success text-white">Buy</a> -->
+                        <!-- </div> -->
+                    <!-- </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </section>
 
@@ -52,40 +52,55 @@
     </div>
   </div>
 </div>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // Script AJAX kau untuk cari barang
-    $('#partSearch').on('keyup', function() {
-        let query = $(this).val();
-        $.ajax({
-            url: "{{ url('/spareparts/search') }}",
-            type: "GET",
-            data: { 'q': query },
-            success: function(data) {
-                let html = '';
-                data.forEach(p => {
-                    html += `<div class="col-md-4 ftco-animate">
-                        <div class="car-wrap rounded bg-white shadow-sm p-3">
-                            <div class="img rounded mb-3" style="background-image: url('{{ asset('images/') }}/${p.img}'); height: 200px;"></div>
-                            <div class="text text-center pt-3">
-                                <h3>${p.name}</h3>
-                                <p class="price text-primary font-weight-bold">RM ${p.price}</p>
-                                <button class="btn btn-outline-secondary" onclick="showDetails('${p.name}', '${p.price}', '${p.desc}')" data-toggle="modal" data-target="#detailModal">Details</button>
-                            </div>
-                        </div>
-                    </div>`;
-                });
-                $('#partsGrid').html(html);
-            }
-        });
-    });
-
-    function showDetails(name, price, desc) {
-        $('#modalPartName').text(name);
-        $('#modalPartDesc').text(desc);
-        $('#modalPartPrice').text('RM ' + price);
-        $('#waLink').attr('href', 'https://wa.me/60123456789?text=Saya berminat dengan ' + name);
+$('#partSearch').on('keyup', function() {
+    let query = $(this).val();
+    
+    if (query.length === 0) {
+        $('#partsGrid').html('');
+        return;
     }
+
+    $.ajax({
+        url: "{{ route('sparepart.search') }}",
+        type: "GET",
+        data: { 'q': query },
+        success: function(data) {
+            console.log("Data berjaya ditarik:", data); // Check console F12
+            let html = '';
+            
+            if (data.length > 0) {
+                data.forEach(p => {
+                    // Kod ni guna 'style="display:block"' supaya dia wajib muncul
+                    html += `
+                    <div class="col-md-4" style="display:block; margin-bottom: 20px;">
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h3>${p.name}</h3>
+            <p style="color: blue; font-weight: bold;">RM ${p.price}</p>
+            <p>${p.description}</p>
+            
+            <div class="d-flex">
+                <button class="btn btn-outline-secondary mr-2" 
+                        onclick="showDetails('${p.name}', '${p.price}', '${p.description}')" 
+                        data-toggle="modal" data-target="#detailModal">Details</button>
+                
+                <a href="https://wa.me/60123456789?text=Saya berminat dengan ${p.name}" 
+                   target="_blank" 
+                   class="btn btn-success text-white">Buy</a>
+            </div>
+        </div>
+    </div>`;
+});
+            } else {
+                html = '<div class="col-12 text-center"><p>Tiada barang dijumpai.</p></div>';
+            }
+            
+            $('#partsGrid').html(html);
+        },
+        error: function(xhr) {
+            console.log("Error:", xhr.responseText);
+        }
+    });
+});
 </script>
-@endsection
